@@ -1,0 +1,6 @@
+typer[all]
+numpy
+torch
+pandas
+matplotlib
+gymnasium[mujoco]==1.0.0a1
