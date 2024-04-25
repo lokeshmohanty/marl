@@ -3,6 +3,7 @@ from rich.progress import track
 from enum import StrEnum
 import gymnasium as gym
 import numpy as np
+import matplotlib.pyplot as plt
 from dqn import DQN
 from td3 import TD3
 
