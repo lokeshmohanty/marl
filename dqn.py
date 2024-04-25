@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from rich.progress import track
 from copy import deepcopy
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def epsilon_greedy(q_values, epsilon=0.1):
     if torch.rand(1)[0] < epsilon:
         return torch.randint(0, q_values.shape[0], (1,)).item()
@@ -58,7 +60,7 @@ class DQN:
         self.batch_size = batch_size
 
     def select_action(self, state):
-        return epsilon_greedy(self.critic(torch.tensor(state, dtype=torch.float32)))
+        return epsilon_greedy(self.critic(torch.tensor(state, dtype=torch.float32, device=device)))
 
     def train(self, max_eps=500, max_iter=int(1e3)):
         for e in range(max_eps):
@@ -78,9 +80,9 @@ class DQN:
                     batch = self.memory.sample(self.batch_size)
                     with torch.no_grad():
                         states, actions, next_states, rewards, dones = [
-                            torch.from_numpy(np.array(x, dtype=np.float32)) for x in zip(*batch)
+                            torch.from_numpy(np.array(x, dtype=np.float32), device=device) for x in zip(*batch)
                         ]
-                        actions = actions.to(dtype=torch.int64)
+                        actions = actions.to(dtype=torch.int64, device=device)
 
                     q_values = self.critic(states)
                     next_q_values = self.critic_target(next_states)
@@ -106,6 +108,7 @@ class DQN:
 
         # self.plot(show_result=True)
         # plt.show()
+        return self.rewards
 
     def plot(self, show_result=False):
         plt.figure(1)

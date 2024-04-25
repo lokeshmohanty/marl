@@ -39,8 +39,11 @@ def train(env: Environment, alg: Algorithm):
 
     np.save(f"train_data_{alg.name}_{env.name}.npy", runs)
 
-def plot(train_data, alg, env):
-    train_data = np.load(f"train_data_{alg}_{env}.npy")
+@app.command()
+def plot(env: Environment, alg: Algorithm):
+    train_data = np.load(f"train_data_{alg.name}_{env.name}.npy",
+                         allow_pickle=True)
+    print(train_data)
     data = np.vstack(train_data)
     mean = np.mean(data, axis=0)
     std = np.std(data, axis=0)
